@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		
+	</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="mystyle.css">
+<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  <script type="text/javascript">
+  	var res1;
+  	var i;
+  	$(document).ready(function(){
+ 			$body = $("body");
+			$(document).on({
+			    ajaxStart: function() { $body.addClass("loading");    },
+			     ajaxStop: function() { $body.removeClass("loading"); }    
+			});
+	  	$.ajax({
+	  		url: 'https://reqres.in/api/users?page=2',
+	  		type: 'GET',
+	  		// dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+	  		data: {},
+	  	})
+	  	.done(function(res) {
+	  		console.log("success");
+	  		console.log(res);
+				res1=res;
+	  		for (i =0;i<res.data.length;i++) {
+	  		$('#tr-data').append('<tr><td>'+res.data[i].id+'</td><td>'+res.data[i].first_name+'</td><td>'+res.data[i].last_name+'</td><td><button class="btn-show btn-info" data-id="'+i+'"  data-toggle="modal" data-target="#myModal" >Show</button></td></tr>');
+	  		}
+		  	$(document).on('click','.btn-show',function(){
+		  		id = $(this).attr('data-id');
+		  		// alert(res.data[id].id+' '+res.data[id].first_name+' '+res.data[id].last_name);
+		  		$('.modal-body').html('<span>ID</span><p>'+res.data[id].id+'</p><span>First Name</span><p><p>'+res.data[id].first_name+'</p><span>Last Name</span><p><p>'+res.data[id].last_name+'</p>');
+		  		// $('#index').val(id);
+		  		
+		  	})
+		  	$(document).on('click','.btn-edit',function(){
+		  		id = $(this).attr('data-id');
+		  		$('#fname').val(res1.data[id].first_name);
+		  		$('#lname').val(res1.data[id].last_name);
+		  	})
+		  	$(document).on('click','.btn-update',function(){
+		  		id = $(this).attr('data-id');
+		  	})
+
+	  	})
+	  	.fail(function() {
+	  		console.log("error");
+	  	})
+	  	.always(function() {
+	  		console.log("complete");
+	  	});
+  })
+  	$(document).on('click','.btn-create',function(){
+  				var fname =	$('#fname').val();
+		  		var lname = $('#lname').val();
+		  		$.ajax({
+		  			url: 'https://reqres.in/api/users',
+		  			type: 'POST',
+		  			// dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+		  			data: {"name": fname,"job":lname},
+		  		})
+		  		.done(function(res) {
+		  			console.log("success");
+		  			res1.data.push({'id':res.id, 'first_name':res.name, 'last_name':res.job});
+			  		$('#tr-data').append('<tr data-id1="#'+i+'"><td>'+res.id+'</td><td>'+res.name+'</td><td>'+res.job+'</td><td><button class="btn-show btn-info" data-id="'+i+'" data-toggle="modal" data-target="#myModal" >Show</button><button class="btn-edit btn-success" data-id="'+i+'">Edit</button><button class="btn-danger"	> Delete</button></td></tr>');
+			  		i++;
+		  			console.log(res);
+		  		})
+		  		.fail(function() {
+		  			console.log("error");
+		  		})
+		  		.always(function() {
+		  			console.log("complete");
+		  		});
+		  		
+		  		 
+		  	})
+  </script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 pd-90">
+				<div class="col-md-6">
+					<div class="panel panel-primary">
+			      <div class="panel-heading">Create User</div>
+			      <div class="panel-body">
+			      	 <div class="form-group">
+			      	 		<label>First Name :</label>
+									<input type="text" name="name" class="form-control" id="fname">
+							  </div>
+							  <div class="form-group">
+							    <label>Last Name :</label>	
+									<input type="text" name="mobile_number" class="form-control" id="lname">
+							  </div>
+							  <button type="submit" class="btn btn-primary btn-create">Create</button>
+							  <button type="submit" class="btn btn-primary btn-create">Update</button>
+			      </div>
+    			</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-primary">
+			      <div class="panel-heading">User List</div>
+			      <div class="panel-body">
+							<table class="table table-hover">
+								<thead>
+								<tr>
+									<th>S.No</th>
+									<th> First Name </th>
+									<th>Last Name</th>
+									<th>Actions</th>
+								</tr>
+								</thead>
+								<tbody  id="tr-data">
+								</tbody>
+							</table>
+			      </div>
+			    </div>
+			    <div class="modal fade" id="myModal" role="dialog">
+				    <div class="modal-dialog">
+				      <!-- Modal content-->
+				      <div class="modal-content">
+				        <div class="modal-header">
+				          <button type="button" class="close" data-dismiss="modal">&times;</button>
+				          <h4 class="modal-title">User Details</h4>
+				        </div>
+				        <div class="modal-body">
+				        </div>
+				        <div class="modal-footer">
+				          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				        </div>
+				      </div>
+				      
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal1"></div>	
+</body>
+</html>
